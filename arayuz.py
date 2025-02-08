@@ -1,4 +1,5 @@
 import csvApp
+import sqlApp
 import datetime
 import logging
 import serial
@@ -55,6 +56,7 @@ class GraphWindow(QWidget):
 
     def update_graph(self, time, data):
         self.plot.setData(time, data)  # Grafiği güncelle
+
     def closeEvent(self, event):
         event.accept()
         self.parent.remove_window(self.name)
@@ -89,10 +91,11 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Yılkat  Electromobile Data Interface")
+        self.setWindowTitle("Yılkat Electromobile Data Interface")
         self.setWindowIcon(QIcon(r'.\icon\icon.png'))
 
         # Alt fonksiyonlarda kullanılacak değişkenleri init sınıfında None atamasını yapıyoruz
+        self.sqlSave = None
         self.disconnect_ports = None
         self.text_port_name = None
         self.ser = None
@@ -410,7 +413,9 @@ class MainWindow(QWidget):
             # Bağlantı kurulduğu anın zaman ve tarih bilgilerini alıp vairable içine atıyoruz. Bu bilgiyi csvApp içinede
             # ki CsvData sınıfına gönderiyoruz bunu da bir variable atıyoruz.
             self.current_date_time = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+
             self.csvSave = csvApp.CsvData(self.current_date_time)
+            self.sqlSave = sqlApp.SqlData(self.current_date_time)
 
             # Ayarlanan aralıklar ile connection devam ediyor mu diye kontrol edecek timer ayalarını yapıyoruz.
             self.timerOfdata = QTimer()
@@ -479,6 +484,7 @@ class MainWindow(QWidget):
                                        yirmisekiz=self.line[27], yirmidokuz=self.line[28], otuz=self.line[29],
                                        otuzbir=self.line[30])]
                 self.csvSave.csvdatainput(self.data_list)
+                self.sqlSave.sqldatainput(self.data_list)
                 print(self.line)
                 self.say = 0
                 for a, lab in enumerate(self.inner_labes_values_q):
@@ -602,6 +608,7 @@ class MainWindow(QWidget):
         self.all_data.clear()
         self.time.clear()
         self.current_second = 0
+        self.sqlSave.connection_close()
         self.refresh_button.setEnabled(True)
         self.refresh_button.setStyleSheet("""
             QPushButton {
