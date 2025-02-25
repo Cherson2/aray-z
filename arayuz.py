@@ -483,9 +483,10 @@ class MainWindow(QWidget):
                                        yirmiyedi=self.line[26],
                                        yirmisekiz=self.line[27], yirmidokuz=self.line[28], otuz=self.line[29],
                                        otuzbir=self.line[30])]
+                print(self.line)
                 self.csvSave.csvdatainput(self.data_list)
                 self.sqlSave.sqldatainput(self.data_list)
-                print(self.line)
+
                 self.say = 0
                 for a, lab in enumerate(self.inner_labes_values_q):
                     for b, label in enumerate(lab):
