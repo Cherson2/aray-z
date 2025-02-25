@@ -40,12 +40,13 @@ class SqlData:
 
         for i in text_list:
             for a in self.listOfDatas:
-                if a == "--":
+                if a == "--" or a == '':
                     i = i + "0" + ","
                 else:
                     i = i + a + ","
             i = i[:len(i)-1]
             i = i + ")"
+            print(i)
             self.cur.execute(i)
         self.con.commit()
     def connection_close(self):
